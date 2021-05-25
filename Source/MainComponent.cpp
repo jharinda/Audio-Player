@@ -19,7 +19,7 @@ MainComponent::MainComponent() :openButton("Open")
         setAudioChannels (0, 2);
     }
 
-    
+    openButton.onClick = [this] { openButtonClicked(); };
 }
 
 MainComponent::~MainComponent()
@@ -32,6 +32,11 @@ MainComponent::~MainComponent()
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     
+}
+
+void MainComponent::openButtonClicked()
+{
+    DBG("clicked");
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)

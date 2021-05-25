@@ -23,7 +23,9 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
 
+
 private:
+    void openButtonClicked();
     //==============================================================================
     // Your private member variables go here...
     juce::TextButton openButton;
