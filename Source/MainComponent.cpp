@@ -45,7 +45,17 @@ void MainComponent::openButtonClicked()
 
     if (chooser.browseForFileToOpen())
     {
+        auto myFile = chooser.getResult();
 
+        juce::AudioFormatReader* reader =formatManager.createReaderFor(myFile);
+
+        if (reader != nullptr)
+        {
+            std::unique_ptr<juce::AudioFormatReaderSource> newSource(new juce::AudioFormatReaderSource(reader, true));
+
+            
+            
+        }
     }
 }
 
