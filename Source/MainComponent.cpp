@@ -22,6 +22,8 @@ MainComponent::MainComponent() :openButton("Open")
     openButton.onClick = [this] { openButtonClicked(); };
 
     addAndMakeVisible(&openButton);
+
+    formatManager.registerBasicFormats();
 }
 
 MainComponent::~MainComponent()
@@ -38,7 +40,13 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
 void MainComponent::openButtonClicked()
 {
-    DBG("clicked");
+    juce::FileChooser chooser("Select Wav or AIFF",
+        juce::File::getSpecialLocation(juce::File::userDesktopDirectory), "*wav,*aiff", true, false);
+
+    if (chooser.browseForFileToOpen())
+    {
+
+    }
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
