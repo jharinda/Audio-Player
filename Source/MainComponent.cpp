@@ -20,6 +20,8 @@ MainComponent::MainComponent() :openButton("Open")
     }
 
     openButton.onClick = [this] { openButtonClicked(); };
+
+    addAndMakeVisible(&openButton);
 }
 
 MainComponent::~MainComponent()
@@ -61,5 +63,5 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-
+    openButton.setBounds(10, 10, getWidth - 50, getHeight() - 40);
 }
