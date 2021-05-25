@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() :openButton("Open")
 {
  
     setSize (200, 100);
@@ -18,6 +18,8 @@ MainComponent::MainComponent()
    
         setAudioChannels (0, 2);
     }
+
+    
 }
 
 MainComponent::~MainComponent()
