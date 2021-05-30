@@ -1,9 +1,12 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton("Stop"),state(Stopped)
+MainComponent::MainComponent() :juce::AudioAppComponent(otherDeviceManager),openButton("Open"),playButton("Play"),stopButton("Stop"),state(Stopped)
 {
- 
+    otherDeviceManager.initialise(2, 2, nullptr, true);
+    audioSettings.reset(
+        new juce::AudioDeviceSelectorComponent(otherDeviceManager, 0, 2, 0, 2, true, true, true, true));
+    addAndMakeVisible(audioSettings.get());
     setSize (200, 150);
 
 
@@ -16,7 +19,7 @@ MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton
     else
     {
    
-        setAudioChannels (0, 2);
+        setAudioChannels (2, 2);
     }
 
     
@@ -37,6 +40,8 @@ MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton
 
     formatManager.registerBasicFormats();
     transport.addChangeListener(this);
+
+    setSize(600, 600);
 }
 
 MainComponent::~MainComponent()
@@ -165,8 +170,8 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    openButton.setBounds(20, 10, getWidth() - 40, 30);
-    playButton.setBounds(20, 50, getWidth() - 40, 30);
-    stopButton.setBounds(20, 90, getWidth() - 40, 30);
-
+    openButton.setBounds(20, 10, getWidth() - 30, 30);
+    playButton.setBounds(20, 50, getWidth() - 30, 30);
+    stopButton.setBounds(20, 90, getWidth() - 30, 30);
+    audioSettings->setBounds(20,130,getWidth() - 20,30);
 }
