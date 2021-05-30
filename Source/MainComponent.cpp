@@ -129,12 +129,12 @@ void MainComponent::changeListenerCallback(juce::ChangeBroadcaster *source)
         if (transport.isPlaying())
         {
             transportStateChanged(Playing);
-            DBG("isPlaying");
+            
         }
         else
         {
             transportStateChanged(Stopped);
-            DBG("Stopped");
+            
         }
     }
 }
