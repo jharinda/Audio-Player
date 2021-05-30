@@ -30,7 +30,9 @@ public:
 private:
     //==============================================================================
     // Your private member variables go here...
-    
+    juce::AudioDeviceManager otherDeviceManager;
+    std::unique_ptr <juce::AudioDeviceSelectorComponent> audioSettings;
+
     enum TransportState
     {
         Stopped,
