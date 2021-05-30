@@ -1,10 +1,10 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() :openButton("Open")
+MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton("Stop")
 {
  
-    setSize (200, 100);
+    setSize (200, 150);
 
 
     if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
@@ -23,6 +23,16 @@ MainComponent::MainComponent() :openButton("Open")
 
     addAndMakeVisible(&openButton);
 
+    playButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playButton.setEnabled(false);
+    playButton.onClick = [this] { playButtonClicked();};
+    addAndMakeVisible(&playButton);
+
+    stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopButton.setEnabled(false);
+    stopButton.onClick = [this] {stopButtonClicked();};
+    addAndMakeVisible(&stopButton);
+
     formatManager.registerBasicFormats();
 }
 
@@ -30,6 +40,16 @@ MainComponent::~MainComponent()
 {
    
     shutdownAudio();
+}
+
+void MainComponent::playButtonClicked()
+{
+
+}
+
+void MainComponent::stopButtonClicked()
+{
+
 }
 
 //==============================================================================
@@ -53,8 +73,6 @@ void MainComponent::openButtonClicked()
         {
             std::unique_ptr<juce::AudioFormatReaderSource> newSource(new juce::AudioFormatReaderSource(reader, true));
 
-            
-            
         }
     }
 }
@@ -81,5 +99,8 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    openButton.setBounds(10, 10, getWidth() - 50, getHeight() - 40);
+    openButton.setBounds(20, 10, getWidth() - 40, 30);
+    playButton.setBounds(20, 50, getWidth() - 40, 30);
+    stopButton.setBounds(20, 90, getWidth() - 40, 30);
+
 }
