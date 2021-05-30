@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton("Stop")
+MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton("Stop"),state(Stopped)
 {
  
     setSize (200, 150);
@@ -19,6 +19,8 @@ MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton
         setAudioChannels (0, 2);
     }
 
+    
+
     openButton.onClick = [this] { openButtonClicked(); };
 
     addAndMakeVisible(&openButton);
@@ -34,6 +36,7 @@ MainComponent::MainComponent() :openButton("Open"),playButton("Play"),stopButton
     addAndMakeVisible(&stopButton);
 
     formatManager.registerBasicFormats();
+    transport.addChangeListener(this);
 }
 
 MainComponent::~MainComponent()
@@ -44,24 +47,25 @@ MainComponent::~MainComponent()
 
 void MainComponent::playButtonClicked()
 {
-
+    transportStateChanged(Starting);
 }
 
 void MainComponent::stopButtonClicked()
 {
-
+    transportStateChanged(Stopping);
 }
 
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
+    transport.prepareToPlay(samplesPerBlockExpected, sampleRate);
     
 }
 
 void MainComponent::openButtonClicked()
 {
     juce::FileChooser chooser("Select Wav or AIFF",
-        juce::File::getSpecialLocation(juce::File::userDesktopDirectory), "*wav,*aiff", true, false);
+        juce::File::getSpecialLocation(juce::File::userDesktopDirectory), "*wav;*aiff;*mp3", true, false);
 
     if (chooser.browseForFileToOpen())
     {
@@ -72,20 +76,81 @@ void MainComponent::openButtonClicked()
         if (reader != nullptr)
         {
             std::unique_ptr<juce::AudioFormatReaderSource> newSource(new juce::AudioFormatReaderSource(reader, true));
+            
+            transport.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
 
+            readerSource.reset(newSource.release());
+            playButton.setEnabled(true);
+            
         }
     }
 }
 
+void MainComponent::transportStateChanged(TransportState newState)
+{
+    if (state != newState)
+    {
+        state = newState;
+
+        switch (state)
+        {
+        case Stopped:
+            transport.setPosition(0.0);
+            playButton.setEnabled(true);
+            stopButton.setEnabled(false);
+            break;
+
+        case Starting:
+            /*playButton.setEnabled(false);*/
+            stopButton.setEnabled(true);
+            transport.start();
+            break;
+
+        case Stopping:
+            /*playButton.setEnabled(true);
+            stopButton.setEnabled(false);*/
+            transport.stop();
+            break;
+
+        case Playing:
+            playButton.setEnabled(false);
+            /*stopButton.setEnabled(true);*/
+            break;
+
+
+        }
+    }
+}
+void MainComponent::changeListenerCallback(juce::ChangeBroadcaster *source) 
+{
+    if (source == &transport)
+    {
+        if (transport.isPlaying())
+        {
+            transportStateChanged(Playing);
+            DBG("isPlaying");
+        }
+        else
+        {
+            transportStateChanged(Stopped);
+            DBG("Stopped");
+        }
+    }
+}
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
     
-    bufferToFill.clearActiveBufferRegion();
+    if (readerSource.get() == nullptr)
+    {
+        bufferToFill.clearActiveBufferRegion();
+        return;
+    }
+    transport.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::releaseResources()
 {
-    
+    transport.releaseResources();
 }
 
 //==============================================================================
