@@ -81,6 +81,7 @@ void MainComponent::openButtonClicked()
 
             readerSource.reset(newSource.release());
             playButton.setEnabled(true);
+            stopButton.setEnabled(false);
             
         }
     }
